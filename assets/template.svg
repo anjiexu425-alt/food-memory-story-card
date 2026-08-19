@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+  <!-- 暖白纸底 + 手撕边缘感（虚线内框） -->
+  <rect x="4" y="4" width="892" height="592" rx="26" fill="#faf5ec"/>
+  <rect x="16" y="16" width="868" height="568" rx="20" fill="none" stroke="#c8b393" stroke-width="2" stroke-dasharray="10 6"/>
+
+  <!-- 左上标签 -->
+  <text x="42" y="48" font-size="16" letter-spacing="3" fill="#9a8267" font-weight="700">FOOD MEMORY STORY CARD · 固定模板</text>
+  <text x="42" y="68" font-size="12" letter-spacing="2" fill="#b09a7d">FIXED TEMPLATE — 每次生成只换内容，不换版式与配色</text>
+
+  <!-- 左侧插画区（3:2 卡片的左侧大图） -->
+  <rect x="42" y="88" width="520" height="390" rx="14" fill="#f1e7d4"/>
+  <rect x="42" y="88" width="520" height="390" rx="14" fill="none" stroke="#d8c7a8" stroke-width="1.5"/>
+  <text x="302" y="118" text-anchor="middle" font-size="14" fill="#b09a7d">插画区 · 根据照片绘制主菜（剪纸扁平风）</text>
+
+  <!-- 插画区示例：一碗面 -->
+  <ellipse cx="302" cy="392" rx="126" ry="20" fill="#efe6d6"/>
+  <path d="M176 392 h252 l-20 -118 a116 58 0 0 0 -212 0 z" fill="#ffffff" stroke="#e3d5bb" stroke-width="3"/>
+  <ellipse cx="302" cy="272" rx="106" ry="48" fill="#d98a5a"/>
+  <path d="M224 272 q78 -58 156 0" fill="none" stroke="#e6b04e" stroke-width="9" stroke-linecap="round"/>
+  <path d="M250 252 q4 -34 10 -52 M282 250 q6 -30 10 -46 M314 250 q8 -28 14 -44" stroke="#c9b493" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <line x1="170" y1="424" x2="148" y2="372" stroke="#8a6a4a" stroke-width="7" stroke-linecap="round"/>
+  <line x1="436" y1="424" x2="458" y2="372" stroke="#8a6a4a" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- 右侧 6 张贴纸区 -->
+  <g>
+    <text x="700" y="118" text-anchor="middle" font-size="14" fill="#b09a7d">6 张贴纸（每张一个故事元素）</text>
+    <!-- 第 1 行 -->
+    <circle cx="618" cy="170" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="618" y="183" text-anchor="middle" font-size="32">☕</text>
+    <circle cx="712" cy="170" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="712" y="183" text-anchor="middle" font-size="32">🥐</text>
+    <circle cx="806" cy="170" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="806" y="183" text-anchor="middle" font-size="32">🍳</text>
+    <!-- 第 2 行 -->
+    <circle cx="618" cy="258" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="618" y="271" text-anchor="middle" font-size="32">☀️</text>
+    <circle cx="712" cy="258" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="712" y="271" text-anchor="middle" font-size="32">🚲</text>
+    <circle cx="806" cy="258" r="36" fill="#ffffff" stroke="#f4ead6" stroke-width="3"/>
+    <text x="806" y="271" text-anchor="middle" font-size="32">✈️</text>
+    <!-- 版式说明 -->
+    <text x="700" y="330" text-anchor="middle" font-size="13" fill="#9a8267">版式固定：3:2 横向</text>
+    <text x="700" y="352" text-anchor="middle" font-size="13" fill="#9a8267">左侧大插画 · 右侧 6 贴纸 · 底部 3 关键词</text>
+    <text x="700" y="374" text-anchor="middle" font-size="13" fill="#9a8267">贴纸可轻微旋转，像随手贴的手帐贴纸</text>
+  </g>
+
+  <!-- 底部关键词条 -->
+  <rect x="42" y="498" width="816" height="52" rx="10" fill="#fffdf7" stroke="#e3d5bb" stroke-width="1.5"/>
+  <text x="450" y="532" text-anchor="middle" font-size="24" letter-spacing="8" fill="#6b5540" font-weight="700">HYGGE · SOLO · BRUNCH</text>
+  <text x="860" y="496" text-anchor="end" font-size="12" fill="#b09a7d">3 个英文关键词（每次按内容换）</text>
+
+  <!-- 配色色板（固定低饱和莫兰迪） -->
+  <text x="42" y="586" font-size="12" fill="#b09a7d">固定配色（低饱和莫兰迪 · 暖白纸）：</text>
+  <g font-size="11" fill="#ffffff" font-weight="700">
+    <rect x="240" y="572" width="78" height="24" rx="5" fill="#faf5ec" stroke="#c8b393"/>
+    <text x="279" y="588" text-anchor="middle" fill="#8a6a4a">暖白</text>
+    <rect x="324" y="572" width="78" height="24" rx="5" fill="#f1e7d4"/>
+    <text x="363" y="588" text-anchor="middle" fill="#8a6a4a">奶油</text>
+    <rect x="408" y="572" width="78" height="24" rx="5" fill="#b98a5a"/>
+    <text x="447" y="588" text-anchor="middle">赭石</text>
+    <rect x="492" y="572" width="78" height="24" rx="5" fill="#8a9a7b"/>
+    <text x="531" y="588" text-anchor="middle">鼠尾草</text>
+    <rect x="576" y="572" width="78" height="24" rx="5" fill="#a7b8c0"/>
+    <text x="615" y="588" text-anchor="middle" fill="#5c4a38">雾蓝</text>
+    <rect x="660" y="572" width="78" height="24" rx="5" fill="#c26a5a"/>
+    <text x="699" y="588" text-anchor="middle">砖红</text>
+  </g>
+</svg>
