@@ -65,6 +65,10 @@ food-memory-story-card/
 
 ## 🔧 安装方法（任意宿主）
 
+### ChatGPT / 多模态宿主（推荐先试）
+
+ChatGPT 以 **Custom GPT** 方式使用：把 [`chatgpt-instructions.md`](./chatgpt-instructions.md) 中「Instructions」整段粘贴到自定义 GPT 的 Instructions 里，并**开启 Code Interpreter**（保证能读取生成图片转 base64 嵌入 HTML）。上传美食照片即可走完整主路径。
+
 ### 方式一：复制 SKILL.md（推荐）
 
 ```bash
