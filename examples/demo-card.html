@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美食记忆故事卡 · Denmark Solo Brunch</title>
+<style>
+  /* ============ 基础重置 ============ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    /* 暖灰背景，衬托暖白卡片 */
+    background: radial-gradient(circle at 50% 30%, #f2ead9 0%, #e6dbc4 100%);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+    padding: 24px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ============ 3D 翻转容器 ============ */
+  .scene { perspective: 1800px; }
+
+  .card {
+    position: relative;
+    width: min(720px, 92vw);
+    aspect-ratio: 3 / 2;               /* 桌面端 3:2 横向构图 */
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform .85s cubic-bezier(.35, .1, .2, 1);
+  }
+  /* 点击后绕 Y 轴翻转 180°，露出背面 */
+  .card.flipped { transform: rotateY(180deg); }
+
+  /* ============ 正/背面通用 ============ */
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 18px;
+    overflow: hidden;
+    /* 手撕纸张边缘感 + 悬浮阴影 */
+    box-shadow:
+      0 2px 4px rgba(90, 70, 50, .12),
+      0 14px 40px rgba(90, 70, 50, .22);
+    background: #faf5ec;
+  }
+
+  .front { background: #faf5ec; }
+
+  .back {
+    background: #faf5ec;
+    transform: rotateY(180deg);        /* 背面预先翻转，正面时才正确显示 */
+  }
+
+  /* ============ 正面 ============ */
+  .front {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 18px;
+  }
+
+  .corner-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: clamp(9px, 1.4vw, 12px);
+    letter-spacing: .18em;
+    color: #9a8267;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .corner-tag .hint { letter-spacing: .05em; opacity: .8; }
+
+  .front-main {
+    flex: 1;
+    display: flex;
+    gap: 14px;
+    min-height: 0;
+  }
+
+  /* 左侧插画 */
+  .illustration {
+    flex: 1.55;
+    background: #f1e7d4;
+    border-radius: 10px;
+    /* 粗粝纸张内衬 */
+    box-shadow: inset 0 0 0 2px rgba(150, 120, 85, .12);
+    display: flex;
+    overflow: hidden;
+  }
+  .illustration svg { width: 100%; height: 100%; display: block; }
+
+  /* 右侧贴纸区 */
+  .sticker-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  .stickers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+    place-items: center;
+  }
+  .sticker {
+    width: clamp(34px, 5.5vw, 58px);
+    height: clamp(34px, 5.5vw, 58px);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: clamp(16px, 2.6vw, 28px);
+    background: #ffffff;
+    border: 2px solid #f4ead6;
+    box-shadow: 0 3px 6px rgba(90, 70, 50, .16);
+    /* 每张贴纸轻微旋转，像手帐里随手贴上去 */
+  }
+  .sticker:nth-child(1) { transform: rotate(-8deg);  background: #f0e2cd; }
+  .sticker:nth-child(2) { transform: rotate(7deg);   background: #f5e8bd; }
+  .sticker:nth-child(3) { transform: rotate(-4deg);  background: #f6e6b2; }
+  .sticker:nth-child(4) { transform: rotate(9deg);   background: #f6dcbd; }
+  .sticker:nth-child(5) { transform: rotate(-6deg);  background: #d9e3e6; }
+  .sticker:nth-child(6) { transform: rotate(5deg);   background: #eed8d2; }
+
+  /* 正面底部关键词 */
+  .keywords {
+    text-align: center;
+    font-size: clamp(12px, 2vw, 20px);
+    font-weight: 700;
+    letter-spacing: .35em;
+    color: #6b5540;
+    margin-top: 8px;
+  }
+
+  /* ============ 背面 ============ */
+  .back {
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+  .back-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 10px;
+    /* 手帐内页横线感 */
+    background-image:
+      repeating-linear-gradient(transparent 0 30px, rgba(150, 120, 85, .10) 30px 31px);
+  }
+  .back-title {
+    font-size: clamp(10px, 1.5vw, 13px);
+    letter-spacing: .2em;
+    color: #a08a6e;
+  }
+  .story {
+    font-size: clamp(12px, 1.9vw, 17px);
+    line-height: 1.9;
+    color: #4a3829;
+    text-align: justify;
+  }
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    font-size: clamp(11px, 1.7vw, 15px);
+    color: #5c4a38;
+  }
+  .field .label {
+    color: #a08a6e;
+    margin-right: 6px;
+    letter-spacing: .05em;
+  }
+  .field .value {
+    border-bottom: 1px dashed #c8b393;
+    padding: 0 4px;
+  }
+  .field .value.blank { color: #b9a686; letter-spacing: .12em; }
+  .back-footer {
+    margin-top: 2px;
+    font-size: clamp(10px, 1.4vw, 12px);
+    color: #b09a7d;
+    letter-spacing: .2em;
+  }
+
+  /* ============ 手机适配：改为纵向卡片 ============ */
+  @media (max-width: 560px) {
+    .card { aspect-ratio: 3 / 4; }
+    .front-main { flex-direction: column; }
+    .illustration { flex: 1.4; }
+    .sticker-panel { flex: 1; justify-content: center; }
+    .stickers { grid-template-columns: repeat(6, 1fr); }
+    .keywords { letter-spacing: .22em; }
+    .back-inner { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <!-- 点击任意位置翻转：JS 只负责切换 .flipped -->
+    <div class="card" id="card" role="button" aria-label="点击翻转卡片">
+
+      <!-- ================= 正面 ================= -->
+      <div class="face front">
+        <div class="corner-tag">
+          <span>DENMARK · SOLO TRIP</span>
+          <span class="hint">点击翻转 ↺</span>
+        </div>
+
+        <div class="front-main">
+          <!--
+            左侧插画：内联 SVG 手绘（剪纸 × 手帐风，低饱和、扁平、粗粝边缘）。
+            如需替换成真实照片或生成图，把下面的 <svg>…</svg> 整段换成：
+            <img src="data:image/jpeg;base64,你的图片base64" alt="brunch" style="width:100%;height:100%;object-fit:cover;">
+          -->
+          <div class="illustration">
+            <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="丹麦 brunch 插画">
+              <!-- 墙 -->
+              <rect x="0" y="0" width="420" height="300" fill="#f6efe0"/>
+              <!-- 窗户（雾蓝框） -->
+              <rect x="18" y="16" width="176" height="132" rx="4" fill="#aabcc6"/>
+              <rect x="26" y="24" width="160" height="116" fill="#e7f0f0"/>
+              <!-- 窗外：太阳 -->
+              <circle cx="150" cy="54" r="16" fill="#eccb77"/>
+              <!-- 窗外：哥本哈根彩房（橙/黄/蓝） -->
+              <rect x="38" y="82" width="40" height="58" fill="#d99a6c"/>
+              <polygon points="34,82 58,60 82,82" fill="#b9774d"/>
+              <rect x="84" y="70" width="36" height="70" fill="#e6c98a"/>
+              <polygon points="80,70 102,48 124,70" fill="#c7a15f"/>
+              <rect x="126" y="86" width="46" height="54" fill="#9fb4c0"/>
+              <polygon points="122,86 149,66 176,86" fill="#7f97a4"/>
+              <!-- 窗外：自行车简笔 -->
+              <circle cx="60" cy="130" r="7" fill="none" stroke="#5c4a38" stroke-width="2.5"/>
+              <circle cx="84" cy="130" r="7" fill="none" stroke="#5c4a38" stroke-width="2.5"/>
+              <line x1="60" y1="130" x2="72" y2="130" stroke="#5c4a38" stroke-width="2"/>
+              <line x1="72" y1="130" x2="76" y2="114" stroke="#5c4a38" stroke-width="2"/>
+              <line x1="76" y1="114" x2="84" y2="130" stroke="#5c4a38" stroke-width="2"/>
+              <!-- 桌面 -->
+              <rect x="0" y="196" width="420" height="104" fill="#d9b98c"/>
+              <rect x="0" y="196" width="420" height="6" fill="#c8a878"/>
+              <!-- 花束（左下，尤加利） -->
+              <g stroke="#7f8f6b" stroke-width="2.5" fill="none">
+                <path d="M46 210 C44 196 42 188 40 178"/>
+                <path d="M54 208 C56 194 58 186 60 176"/>
+                <path d="M62 210 C66 198 68 190 70 182"/>
+              </g>
+              <circle cx="40" cy="176" r="5" fill="#e8a4a0"/>
+              <circle cx="60" cy="174" r="5" fill="#f2c6a0"/>
+              <circle cx="70" cy="180" r="5" fill="#e8a4a0"/>
+              <!-- 盘子 -->
+              <ellipse cx="150" cy="246" rx="64" ry="30" fill="#efe6d6"/>
+              <ellipse cx="150" cy="238" rx="56" ry="24" fill="#ffffff"/>
+              <!-- 开放式三明治：黑麦面包 + 蛋 + 三文鱼 + 香草 -->
+              <rect x="118" y="224" width="66" height="18" rx="5" fill="#8a6a4a"/>
+              <rect x="124" y="212" width="24" height="14" rx="7" fill="#e6b04e"/>
+              <circle cx="136" cy="211" r="7" fill="#f0c168"/>
+              <rect x="150" y="214" width="28" height="12" rx="6" fill="#e08a74"/>
+              <path d="M126 210 q4 -8 8 -10 M140 208 q4 -7 8 -9" stroke="#7f8f6b" stroke-width="2.5" fill="none"/>
+              <!-- 拿铁（杯 + 碟 + 热气） -->
+              <ellipse cx="268" cy="248" rx="30" ry="9" fill="#efe6d6"/>
+              <path d="M250 214 h36 l-4 34 h-28 z" fill="#ffffff"/>
+              <ellipse cx="268" cy="214" rx="18" ry="5" fill="#b98a5a"/>
+              <ellipse cx="268" cy="214" rx="13" ry="3.5" fill="#f6ead6"/>
+              <path d="M262 200 q-2 -8 2 -14 M274 200 q2 -8 -2 -14" stroke="#c9b493" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <!-- 丹麦酥（金色螺旋） -->
+              <circle cx="352" cy="226" r="24" fill="#e9c173"/>
+              <circle cx="352" cy="226" r="24" fill="none" stroke="#c99a4d" stroke-width="2"/>
+              <circle cx="352" cy="226" r="15" fill="none" stroke="#c99a4d" stroke-width="2"/>
+              <circle cx="352" cy="226" r="7" fill="#c99a4d"/>
+            </svg>
+          </div>
+
+          <!-- 右侧 6 张贴纸 -->
+          <div class="sticker-panel">
+            <div class="stickers">
+              <div class="sticker" title="咖啡">☕</div>
+              <div class="sticker" title="丹麦酥">🥐</div>
+              <div class="sticker" title="溏心蛋">🍳</div>
+              <div class="sticker" title="太阳">☀️</div>
+              <div class="sticker" title="自行车">🚲</div>
+              <div class="sticker" title="旅行票根">✈️</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="keywords">HYGGE · SOLO · BRUNCH</div>
+      </div>
+
+      <!-- ================= 背面 ================= -->
+      <div class="face back">
+        <div class="back-inner">
+          <div class="back-title">— 记忆 · 2026 —</div>
+          <p class="story">
+            六月的哥本哈根，风里还有一点凉。一个人靠窗坐下，点了杯拿铁和一份开放式三明治。
+            没有人等，也没有人催。盘子轻轻响，阳光慢慢挪。
+            就这样，把一顿 brunch 吃成了一段只属于自己的上午。
+          </p>
+          <div class="fields">
+            <div class="field"><span class="label">日期</span><span class="value">2026.06.04</span></div>
+            <div class="field"><span class="label">一起吃的人</span><span class="value">一个人</span></div>
+            <div class="field"><span class="label">心情</span><span class="value blank">________</span></div>
+          </div>
+          <div class="back-footer">🍽 A HYGGE MOMENT, JUST FOR ME</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 点击卡片任意位置翻转（再次点击翻回）
+    const card = document.getElementById('card');
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+  </script>
+</body>
+</html>
