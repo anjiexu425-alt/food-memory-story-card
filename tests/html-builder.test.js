@@ -66,12 +66,14 @@ test('兜底：无任何视觉资源时输出 css-only 正面，卡片仍完整'
   assert.deepEqual(assertSelfContained(html), []);
 });
 
-test('记忆诚实：未提供字段时输出空位，不编造事实', () => {
+test('记忆诚实：未提供字段时输出空位占位，不编造事实', () => {
   const html = buildCardHtml({ front: {}, back: { story: '' } });
   for (const label of ['日期', '地点', '一起吃的人', '心情']) {
     assert.ok(html.includes(label));
   }
-  assert.ok(html.includes('________'));
+  // 空位不再写死文本，而是 CSS :empty::before 占位符（点击即可编辑）
+  assert.ok(html.includes('value blank'));
+  assert.ok(html.includes(':empty::before'));
 });
 
 test('记忆诚实：提供的字段如实填入，缺的留空', () => {
@@ -80,8 +82,27 @@ test('记忆诚实：提供的字段如实填入，缺的留空', () => {
     back: { fields: [{ label: '日期', value: '2026.06.04' }, { label: '地点', value: '' }] },
   });
   assert.ok(html.includes('2026.06.04'));
-  // 地点未提供 → 自动显示空位并带 blank 样式
-  assert.ok(html.includes('地点</span><span class="value blank">________</span>'));
+  // 地点未提供 → 空值 + blank 占位（可编辑）
+  assert.ok(html.includes('地点</span><span class="value blank" contenteditable="true"'));
+  // 纯下划线输入也视为空位（不把 ________ 当真实内容）
+  const html2 = buildCardHtml({ front: {}, back: { fields: [{ label: '心情', value: '________' }] } });
+  assert.ok(html2.includes('心情</span><span class="value blank" contenteditable="true"'));
+});
+
+test('背面可编辑：字段与故事均为 contenteditable，编辑点击不翻转', () => {
+  const html = buildCardHtml({
+    front: {},
+    back: { story: '一段故事。', fields: [{ label: '日期', value: '2026.06.04' }] },
+  });
+  assert.ok(html.includes('contenteditable="true"'));
+  assert.ok(html.includes('<p class="story" contenteditable="true"'));
+  // 空故事也渲染为可编辑元素（CSS 占位提示）
+  const htmlEmpty = buildCardHtml({ front: {}, back: { story: '' } });
+  assert.ok(htmlEmpty.includes('<p class="story" contenteditable="true"'));
+  // 翻转 JS 保护可编辑区：点击编辑区不翻转
+  assert.ok(html.includes("closest('[contenteditable=\"true\"]')"));
+  // 默认 footer 提示可编辑
+  assert.ok(html.includes('点击编辑'));
 });
 
 test('html-builder 遇到假路径/假 base64 自动降级，绝不写入假图', () => {
@@ -103,7 +124,7 @@ test('html-builder 遇到假路径/假 base64 自动降级，绝不写入假图'
 
 test('DEFAULT_FIELDS 全部是空位（不可包含编造的默认事实）', () => {
   for (const f of DEFAULT_FIELDS) {
-    assert.ok(/^_{2,}$/.test(f.value), `字段 ${f.label} 默认值应为空位`);
+    assert.equal(f.value, '', `字段 ${f.label} 默认值应为空`);
   }
 });
 

@@ -13,10 +13,10 @@
  */
 
 const DEFAULT_FIELDS = [
-  { label: '日期', value: '________' },
-  { label: '地点', value: '________' },
-  { label: '一起吃的人', value: '________' },
-  { label: '心情', value: '________' },
+  { label: '日期', value: '' },
+  { label: '地点', value: '' },
+  { label: '一起吃的人', value: '' },
+  { label: '心情', value: '' },
 ];
 
 const STYLE = `
@@ -84,6 +84,13 @@ body {
 .field .value { border-bottom: 1px dashed #c8b393; padding: 0 4px; }
 .field .value.blank { color: #b9a686; letter-spacing: .12em; }
 .back-footer { margin-top: 2px; font-size: clamp(10px,1.4vw,12px); color: #b09a7d; letter-spacing: .2em; }
+/* ============ 背面可编辑（contenteditable） ============ */
+[contenteditable="true"] { outline: none; cursor: text; border-radius: 3px; }
+[contenteditable="true"]:hover { box-shadow: 0 0 0 1px dashed rgba(160,142,110,.5); }
+[contenteditable="true"]:focus { box-shadow: 0 0 0 2px dashed #a08a6e; background: #fffdf7; }
+/* 空位占位：元素为空时用 CSS 显示占位符，用户一点即消失可直接输入 */
+.value.blank:empty::before { content: "________"; color: #b9a686; letter-spacing: .12em; }
+.story:empty::before { content: "（写下这一刻的回忆…）"; color: #b9a686; letter-spacing: 0; }
 @media (max-width: 560px) {
   .card { aspect-ratio: 3 / 4; }
   .front-main { flex-direction: column; }
@@ -143,9 +150,12 @@ function buildFields(fields) {
   const list = Array.isArray(fields) && fields.length ? fields : DEFAULT_FIELDS;
   return list
     .map((f) => {
-      const value = f && typeof f.value === 'string' && f.value.trim() ? f.value : '________';
-      const blank = /^_{2,}$/.test(value.trim()) ? ' blank' : '';
-      return `<div class="field"><span class="label">${escapeHtml(f.label)}</span><span class="value${blank}">${escapeHtml(value)}</span></div>`;
+      const raw = f && typeof f.value === 'string' ? f.value.trim() : '';
+      // 空值或纯下划线占位 → 按空处理：CSS :empty::before 显示占位符
+      const value = raw && !/^_{2,}$/.test(raw) ? raw : '';
+      const blank = value ? '' : ' blank';
+      // contenteditable：用户可在浏览器里直接编辑日期/地点/心情等内容
+      return `<div class="field"><span class="label">${escapeHtml(f.label)}</span><span class="value${blank}" contenteditable="true" spellcheck="false">${escapeHtml(value)}</span></div>`;
     })
     .join('\n            ');
 }
@@ -171,7 +181,7 @@ function buildCardHtmlDetailed(options = {}) {
   const title = meta.title || '美食记忆故事卡';
   const tag = meta.tag || 'FOOD MEMORY STORY';
   const backTitle = back.title || '— 记忆 · 这一刻 —';
-  const footer = back.footer || '🍽 点击任意位置翻回正面';
+  const footer = back.footer || '✎ 日期/地点/心情/故事均可点击编辑 · 点其他位置翻回正面';
 
   const html = `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -202,7 +212,7 @@ ${STYLE}
       <div class="face back">
         <div class="back-inner">
           <div class="back-title">${escapeHtml(backTitle)}</div>
-          ${story ? `          <p class="story">${escapeHtml(story)}</p>` : ''}
+          <p class="story" contenteditable="true" spellcheck="false">${story ? escapeHtml(story) : ''}</p>
           <div class="fields">${fields}</div>
           <div class="back-footer">${escapeHtml(footer)}</div>
         </div>
@@ -211,7 +221,11 @@ ${STYLE}
   </div>
   <script>
     var card = document.getElementById('card');
-    card.addEventListener('click', function () { card.classList.toggle('flipped'); });
+    card.addEventListener('click', function (e) {
+      // 在可编辑区域（日期/地点/心情/故事）点击时聚焦编辑，不触发翻转
+      if (e.target.closest('[contenteditable="true"]')) return;
+      card.classList.toggle('flipped');
+    });
   </script>
 </body>
 </html>
